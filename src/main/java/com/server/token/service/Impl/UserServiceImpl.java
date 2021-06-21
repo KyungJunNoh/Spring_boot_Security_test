@@ -33,5 +33,10 @@ public class UserServiceImpl implements UserService {
         user.update(userRequestDto.getUserId(), userRequestDto.getUserPw());
     }
 
+    @Override
+    public void delete(Long idx) {
+        userRepository.deleteById(idx);
+    }
+
 
 }

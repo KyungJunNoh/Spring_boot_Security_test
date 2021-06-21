@@ -9,4 +9,5 @@ public interface UserService {
     void join(User user);
     User read(Long idx);
     void update(Long idx, UserRequestDto userRequestDto);
+    void delete(Long idx);
 }

@@ -31,8 +31,11 @@ public class UserController {
         userService.update(idx,userRequestDto);
         return idx + " Change Success";
     }
-//    @PutMapping("/delete")
-//    public User delete(@RequestBody String idx){
-//
-//    }
+
+    @PutMapping("/delete/{idx}")
+    public String delete(@PathVariable("idx") Long idx){
+        User user = read(idx);
+        userService.delete(idx);
+        return user.getUserId() + " 삭제 완료";
+    }
 }
