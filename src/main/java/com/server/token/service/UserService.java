@@ -1,4 +1,7 @@
 package com.server.token.service;
 
-public class UserService {
+import com.server.token.domain.entity.User;
+
+public interface UserService {
+    void join(User user);
 }
