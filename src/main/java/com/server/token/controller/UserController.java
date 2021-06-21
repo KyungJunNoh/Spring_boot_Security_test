@@ -36,6 +36,6 @@ public class UserController {
     public String delete(@PathVariable("idx") Long idx){
         User user = read(idx);
         userService.delete(idx);
-        return user.getUserId() + " 삭제 완료";
+        return user.getUserEmail() + " 삭제 완료";
     }
 }

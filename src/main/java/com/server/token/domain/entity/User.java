@@ -13,11 +13,11 @@ import javax.persistence.Id;
 public class User {
     @Id @GeneratedValue
     private Long userIdx;
-    private String userId;
+    private String userEmail;
     private String userPw;
 
-    public void update(String userId,String userPw){
-        this.userId = userId;
+    public void update(String userEmail,String userPw){
+        this.userEmail = userEmail;
         this.userPw = userPw;
     }
 }

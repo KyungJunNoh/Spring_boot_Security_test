@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void join(User user) {
-        if(userRepository.findByUserId(user.getUserId()) != null){
+        if(userRepository.findByUserEmail(user.getUserEmail()) != null){
             throw new UserAlreadyExistsException("해당 아이디는 이미 존재합니다.");
         }
         userRepository.save(user);
@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void update(Long idx, UserRequestDto userRequestDto) {
         User user = read(idx);
-        user.update(userRequestDto.getUserId(), userRequestDto.getUserPw());
+        user.update(userRequestDto.getUserEmail(), userRequestDto.getUserPw());
     }
 
     @Override
