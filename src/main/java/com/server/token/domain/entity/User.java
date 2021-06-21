@@ -15,4 +15,9 @@ public class User {
     private Long userIdx;
     private String userId;
     private String userPw;
+
+    public void update(String userId,String userPw){
+        this.userId = userId;
+        this.userPw = userPw;
+    }
 }

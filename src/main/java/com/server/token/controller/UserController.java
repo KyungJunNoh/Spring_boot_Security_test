@@ -1,5 +1,6 @@
 package com.server.token.controller;
 
+import com.server.token.domain.dto.UserRequestDto;
 import com.server.token.domain.entity.User;
 import com.server.token.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +24,12 @@ public class UserController {
     public User read(@PathVariable("idx") Long idx){
         User user = userService.read(idx);
         return user;
+    }
+
+    @PutMapping("/update/{idx}")
+    public String update(@PathVariable("idx") Long idx, @RequestBody UserRequestDto userRequestDto){
+        userService.update(idx,userRequestDto);
+        return idx + " Change Success";
     }
 //    @PutMapping("/delete")
 //    public User delete(@RequestBody String idx){
