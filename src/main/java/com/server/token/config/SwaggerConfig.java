@@ -17,19 +17,19 @@ public class SwaggerConfig {
     public ApiInfo apiInfo() {
 
         return new ApiInfoBuilder()
-                .title("CRUD-TEST")
-                .description("TEST")
+                .title("Security Test")
+                .description("Security Test를 위해 만들어진 Swagger")
                 .build();
     }
 
     @Bean
     public Docket commonApi() {
         return new Docket(DocumentationType.SWAGGER_2)
-                .groupName("prccrud")
+                .groupName("server")
                 .apiInfo(this.apiInfo())
                 .select()
                 .apis(RequestHandlerSelectors
-                        .basePackage("com.prccrud.www.controller"))
+                        .basePackage("com.server.www.controller"))
                 .paths(PathSelectors.ant("/api/**"))
                 .build();
     }
