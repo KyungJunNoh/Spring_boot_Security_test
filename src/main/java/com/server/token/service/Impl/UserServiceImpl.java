@@ -2,6 +2,7 @@ package com.server.token.service.Impl;
 
 import com.server.token.domain.dto.UserRequestDto;
 import com.server.token.domain.entity.User;
+import com.server.token.exception.UserAlreadyExistsException;
 import com.server.token.exception.UserNotFoundException;
 import com.server.token.repository.UserRepository;
 import com.server.token.service.UserService;
@@ -18,11 +19,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void join(User user) {
+        if(userRepository.findByUserId(user.getUserId()) != null){
+            throw new UserAlreadyExistsException();
+        }
         userRepository.save(user);
     }
 
     @Override
     public User read(Long idx) {
+        if(userRepository.findById(idx) != null){
+            throw new UserNotFoundException();
+        }
         return userRepository.findById(idx).orElseThrow(UserNotFoundException :: new);
     }
 
