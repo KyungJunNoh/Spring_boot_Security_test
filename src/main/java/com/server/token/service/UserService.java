@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface UserService {
     void join(User user);
-    Optional<User> read(Long idx);
+    User read(Long idx);
 }

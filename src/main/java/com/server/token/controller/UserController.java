@@ -20,8 +20,8 @@ public class UserController {
     }
 
     @GetMapping("/read/{idx}")
-    public Optional<User> read(@PathVariable("idx") Long idx){
-        Optional<User> user = userService.read(idx);
+    public User read(@PathVariable("idx") Long idx){
+        User user = userService.read(idx);
         return user;
     }
 //    @PutMapping("/delete")

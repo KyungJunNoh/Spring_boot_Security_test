@@ -1,6 +1,7 @@
 package com.server.token.service.Impl;
 
 import com.server.token.domain.entity.User;
+import com.server.token.exception.UserNotFoundException;
 import com.server.token.repository.UserRepository;
 import com.server.token.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> read(Long idx) {
-        return userRepository.findById(idx);
+    public User read(Long idx) {
+        return userRepository.findById(idx).orElseThrow(UserNotFoundException :: new);
     }
 
 
