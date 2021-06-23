@@ -22,11 +22,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
 
-    private JwtTokenProvider jwtTokenProvider;
-
-    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -40,11 +36,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 // SecurityContext 에 Authentication 객체를 저장
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        }catch(CustomException e){
             SecurityContextHolder.clearContext();
+        }catch(CustomException e){
             response.sendError(e.getHttpStatus().value(), e.getMessage());
             return ;
         }
+
         filterChain.doFilter(request, response);
     }
 }
