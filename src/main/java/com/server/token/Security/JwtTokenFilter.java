@@ -24,6 +24,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private JwtTokenProvider jwtTokenProvider;
 
+    public JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         // 헤더에서 JWT를 받아옴
