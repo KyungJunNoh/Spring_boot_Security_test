@@ -6,6 +6,7 @@ import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,8 +26,11 @@ public class JwtTokenProvider {
     @Value("${security.jwt.token.secretKey}")
     private String secretKey;
 
-    public final static long TOKEN_VALIDATION_SECOND = 1000L * 60;  // 1분을 accessToken 만료 기간으로 잡는다
-    public final static long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 120; // 1시간을 refreshToken 만료 기간으로 잡는다.
+    public final static long TOKEN_VALIDATION_SECOND = 1000L * 3600 * 24;  //하루를 accessToken 만료 기간으로 잡는다
+    public final static long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 3600 * 24 * 210; //7개월을 refreshToken 만료 기간으로 잡는다.
+
+//    public final static long TOKEN_VALIDATION_SECOND = 1000L * 60;  // 1분을 accessToken 만료 기간으로 잡는다
+//    public final static long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 120; // 1시간을 refreshToken 만료 기간으로 잡는다.
 
     private final UserDetailsService userDetailsService; // 실제 데이터베이스에서 사용자 인증정보를 가져오는 userDetailsService 선언
 
@@ -64,7 +68,8 @@ public class JwtTokenProvider {
     }
 
     public Authentication getAuthentication(String token) {
-        return null;
+        UserDetails userDetails = userDetailsService.loadUserByUsername(getUsername(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
     public String getUsername(String token) {
@@ -86,7 +91,7 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            throw new CustomException("Expired or invalid JWT token", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomException("Expired or invalid JWT token", HttpStatus.UNAUTHORIZED);
         }
     }
 

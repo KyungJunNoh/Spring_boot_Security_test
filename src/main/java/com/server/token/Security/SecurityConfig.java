@@ -1,38 +1,44 @@
 package com.server.token.Security;
 
+//import com.server.token.Security.JwtTokenProvider;
+import com.server.token.exception.CustomException;
+import lombok.RequiredArgsConstructor;
+import org.aspectj.apache.bcel.ExceptionConstants;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.web.bind.annotation.GetMapping;
 
 
 @EnableWebSecurity
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    private JwtTokenProvider jwtTokenProvider;
-
-    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception{
-        http.authorizeRequests()
-                .antMatchers("/**").permitAll();
-        http.csrf().disable()
+        http
+                .cors().and()
+                .csrf().disable()
+                .httpBasic().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt token으로 인증할것이므로 세션필요없으므로 생성안함.
+                .and()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll()
+                .antMatchers("/*/login", "/*/signup").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin().disable();
+                .apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception{
-        web
-                .ignoring()
-                .antMatchers("/**")
-                .anyRequest();
-    }
+//    @Override
+//    public void configure(WebSecurity web) throws Exception{
+//        web
+//                .ignoring()
+//                .antMatchers("/**")
+//                .anyRequest();
+//    }
 }
