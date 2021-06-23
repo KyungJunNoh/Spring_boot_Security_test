@@ -1,6 +1,6 @@
 package com.server.token.service.Impl;
 
-import com.server.token.domain.dto.UserRequestDto;
+import com.server.token.domain.dto.UserDto;
 import com.server.token.domain.entity.User;
 import com.server.token.exception.UserAlreadyExistsException;
 import com.server.token.exception.UserNotFoundException;
@@ -18,11 +18,12 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public void join(User user) {
-        if(userRepository.findByUserEmail(user.getUserEmail()) != null){
+    public String join(UserDto userDto) {
+        if(userRepository.findByUserEmail(userDto.getUserEmail()) != null){
             throw new UserAlreadyExistsException("해당 아이디는 이미 존재합니다.");
         }
-        userRepository.save(user);
+        userRepository.save(userDto);
+        return "hello";
     }
 
     @Override
@@ -35,9 +36,9 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void update(Long idx, UserRequestDto userRequestDto) {
+    public void update(Long idx, UserDto userDto) {
         User user = read(idx);
-        user.update(userRequestDto.getUserEmail(), userRequestDto.getUserPw());
+        user.update(userDto.getUserEmail(), userDto.getUserPw());
     }
 
     @Override

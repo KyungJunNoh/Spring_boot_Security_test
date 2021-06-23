@@ -1,13 +1,13 @@
 package com.server.token.service;
 
-import com.server.token.domain.dto.UserRequestDto;
+import com.server.token.domain.dto.UserDto;
 import com.server.token.domain.entity.User;
 
 import java.util.Optional;
 
 public interface UserService {
-    void join(User user);
+    String join(UserDto userDto);
     User read(Long idx);
-    void update(Long idx, UserRequestDto userRequestDto);
+    void update(Long idx, UserDto userDto);
     void delete(Long idx);
 }

@@ -1,6 +1,6 @@
 package com.server.token.controller;
 
-import com.server.token.domain.dto.UserRequestDto;
+import com.server.token.domain.dto.UserDto;
 import com.server.token.domain.entity.User;
 import com.server.token.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,9 +15,10 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/join")
-    public User join(@RequestBody User user){
-        userService.join(user);
-        return user;
+    public String join(@RequestBody UserDto userDto) throws Exception{
+        System.out.println(userDto.getUserEmail());
+        userService.join(userDto);
+        return "success";
     }
 
     @GetMapping("/read/{idx}")
@@ -27,8 +28,8 @@ public class UserController {
     }
 
     @PutMapping("/update/{idx}")
-    public String update(@PathVariable("idx") Long idx, @RequestBody UserRequestDto userRequestDto){
-        userService.update(idx,userRequestDto);
+    public String update(@PathVariable("idx") Long idx, @RequestBody UserDto userDto){
+        userService.update(idx,userDto);
         return idx + " Change Success";
     }
 
