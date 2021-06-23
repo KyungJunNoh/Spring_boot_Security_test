@@ -8,14 +8,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.stereotype.Component;
 
 @Component
-
+@RequiredArgsConstructor
 public class JwtTokenFilterConfigurer extends SecurityConfigurerAdapter<DefaultSecurityFilterChain, HttpSecurity> {
 
     private final JwtTokenProvider jwtTokenProvider;
-
-    public JwtTokenFilterConfigurer(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
 
     @Override
     public void configure(HttpSecurity httpSecurity) throws Exception {
