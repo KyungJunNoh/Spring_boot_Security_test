@@ -3,6 +3,7 @@ package com.server.token.controller;
 import com.server.token.domain.dto.UserDto;
 import com.server.token.domain.entity.User;
 import com.server.token.service.UserService;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,10 +16,8 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/join")
-    public String join(@RequestBody UserDto userDto) throws Exception{
-        System.out.println(userDto.getUserEmail());
-        userService.join(userDto);
-        return "success";
+    public String signup(@ApiParam("Signup User") @RequestBody UserDto userDto){
+        return userService.signup(userDto);
     }
 
     @GetMapping("/read/{idx}")
