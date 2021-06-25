@@ -25,16 +25,18 @@ public class User implements UserDetails {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
-    private List<String> roles = new ArrayList<>();
+    private List<Role> roles = new ArrayList<>();
 
     public void update(String userEmail,String userPw){
         this.userEmail = userEmail;
         this.userPw = userPw;
     }
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        List<String> rolesConvertString = this.roles.stream().map(Enum::name).collect(Collectors.toList());
+        return rolesConvertString.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
     }
 
     @Override
