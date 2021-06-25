@@ -1,5 +1,6 @@
 package com.server.token.Security;
 
+import com.server.token.domain.entity.Role;
 import com.server.token.domain.entity.User;
 import com.server.token.exception.CustomException;
 import io.jsonwebtoken.*;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
@@ -19,6 +21,8 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
@@ -41,23 +45,16 @@ public class JwtTokenProvider {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes()); // secretKey를 Base64(암호화 알고리즘)으로 인코딩 시킴 (암호화 시킴)
     }
 
-    //accessToken 발급
-    public String generateToken(User user){
-        return createToken(user.getUserEmail(),user.getRoles(), TOKEN_VALIDATION_SECOND);
-    }
-
-    //refreshToken 발급
-    public String generateRefreshToken(User user){
-        return createToken(user.getUserEmail(),user.getRoles(), REFRESH_TOKEN_VALIDATION_SECOND);
-    }
-
     // JWT 토큰 생성
-    public String createToken(String userPk, List<String> roles, long expireTime) {
-        Claims claims = Jwts.claims().setSubject(userPk); // JWT payload 에 저장되는 정보단위
-        claims.put("roles", roles); // 정보는 key / value 쌍으로 저장된다.
+    public String createToken(String userEmail, List<Role> roles) {
+        Claims claims = Jwts.claims().setSubject(userEmail); // JWT payload 에 저장되는 정보단위
+        claims.put("auth", roles.stream().
+                map(s -> new SimpleGrantedAuthority(s.getAuthority())).
+                filter(Objects::nonNull).collect(Collectors.toList()));; // 정보는 key / value 쌍으로 저장된다.
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + expireTime); // 유효시간 선언 [ 지금시간 + expireTime 시간 ]
+        Date validity = new Date(now.getTime() + TOKEN_VALIDATION_SECOND); // 유효시간 선언 [ 지금시간 + expireTime 시간 ]
+
         return Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보
