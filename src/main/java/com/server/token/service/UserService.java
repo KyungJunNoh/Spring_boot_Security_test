@@ -6,7 +6,7 @@ import com.server.token.domain.entity.User;
 import java.util.Optional;
 
 public interface UserService {
-    String join(UserDto userDto);
+    String signup(UserDto userDto);
     User read(Long idx);
     void update(Long idx, UserDto userDto);
     void delete(Long idx);
