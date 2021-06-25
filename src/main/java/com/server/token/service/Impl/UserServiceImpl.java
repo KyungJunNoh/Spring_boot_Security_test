@@ -1,5 +1,6 @@
 package com.server.token.service.Impl;
 
+import com.server.token.Security.JwtTokenProvider;
 import com.server.token.domain.dto.UserDto;
 import com.server.token.domain.entity.User;
 import com.server.token.exception.UserAlreadyExistsException;
@@ -16,23 +17,21 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-
+    private final JwtTokenProvider jwtTokenProvider;
     @Override
-    public String join(UserDto userDto) {
-        System.out.println(userDto.getUserEmail());
+    public String signup(UserDto userDto) {
         if(userRepository.findByUserEmail(userDto.getUserEmail()) != null){
             throw new UserAlreadyExistsException("해당 아이디는 이미 존재합니다.");
         }
         userRepository.save(userDto.toEntity());
-        return "hello";
+
+        String token = jwtTokenProvider.createToken(userDto.getUserEmail(),userDto.toEntity().getRoles());
+        return "Barer " + token;
     }
 
     @Override
     public User read(Long idx) {
-        if(userRepository.findById(idx) != null){
-            throw new UserNotFoundException("해당 유저를 찾을 수 없습니다.");
-        }
-        return userRepository.findById(idx).orElseThrow(UserNotFoundException :: new);
+        return userRepository.findById(idx).orElseThrow(UserNotFoundException :: new); // 코드를 수정 후 뭐가 이렇게 많이 나오지?
     }
 
     @Transactional
