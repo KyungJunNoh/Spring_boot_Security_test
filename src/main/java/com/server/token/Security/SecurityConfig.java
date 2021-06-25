@@ -28,17 +28,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt token으로 인증할것이므로 세션필요없으므로 생성안함.
                 .and()
                 .authorizeRequests()
-                .antMatchers("/*/login", "/*/signup").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
     }
 
-//    @Override
-//    public void configure(WebSecurity web) throws Exception{
-//        web
-//                .ignoring()
-//                .antMatchers("/**")
-//                .anyRequest();
-//    }
+    @Override
+    public void configure(WebSecurity web) throws Exception{
+        web
+                .ignoring()
+                .antMatchers("/**")
+                .anyRequest();
+    }
 }
