@@ -64,6 +64,19 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    public String createRefreshToken(){
+        Claims claims = Jwts.claims().setSubject(null);
+
+        Date now = new Date(); // 지금 시간
+        Date validity = new Date(now.getTime() + REFRESH_TOKEN_VALIDATION_SECOND); // 지금 시간 + expireTime 시
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(validity)
+                .signWith(SignatureAlgorithm.ES256,secretKey)
+                .compact();
+    }
+
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
