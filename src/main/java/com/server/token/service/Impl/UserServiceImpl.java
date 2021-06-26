@@ -1,6 +1,7 @@
 package com.server.token.service.Impl;
 
 import com.server.token.Security.JwtTokenProvider;
+import com.server.token.domain.dto.LoginDto;
 import com.server.token.domain.dto.UserDto;
 import com.server.token.domain.entity.User;
 import com.server.token.exception.UserAlreadyExistsException;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -18,6 +20,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+
     @Override
     public String signup(UserDto userDto) {
         if(userRepository.findByUserEmail(userDto.getUserEmail()) != null){
@@ -27,6 +30,11 @@ public class UserServiceImpl implements UserService {
 
         String token = jwtTokenProvider.createToken(userDto.getUserEmail(),userDto.toEntity().getRoles());
         return "Barer " + token;
+    }
+
+    @Override
+    public Map<String, String> signin(LoginDto loginDto) {
+        return null;
     }
 
     @Override

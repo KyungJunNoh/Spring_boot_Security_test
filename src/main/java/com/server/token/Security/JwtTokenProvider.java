@@ -38,10 +38,9 @@ public class JwtTokenProvider {
 
     private final UserDetailsService userDetailsService; // 실제 데이터베이스에서 사용자 인증정보를 가져오는 userDetailsService 선언
 
-    // @PostConstruct는 의존성 주입이 이루어진 후 초기화를 수행하는 메서드
     @PostConstruct
     // @PostConstruct가 붙은 메서드는 클래스가 service(로직을 탈 때? 로 생각 됨)를 수행하기 전에 발생한다. 이 메서드는 다른 리소스에서 호출되지 않는다해도 수행된다.
-    protected void init() {
+    protected void init() { // 의존성 주입이 이루어진 후 초기화를 수행하는 메서드
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes()); // secretKey를 Base64(암호화 알고리즘)으로 인코딩 시킴 (암호화 시킴)
     }
 
