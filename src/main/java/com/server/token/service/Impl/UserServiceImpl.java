@@ -9,9 +9,11 @@ import com.server.token.exception.UserNotFoundException;
 import com.server.token.repository.UserRepository;
 import com.server.token.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,22 +21,31 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
+    //signup
     @Override
     public String signup(UserDto userDto) {
         if(userRepository.findByUserEmail(userDto.getUserEmail()) != null){
             throw new UserAlreadyExistsException("해당 아이디는 이미 존재합니다.");
         }
+        userDto.setUserPw(passwordEncoder.encode(userDto.getUserPw())); // 패스워드를 암호화하여 저장
         userRepository.save(userDto.toEntity());
 
         String token = jwtTokenProvider.createToken(userDto.getUserEmail(),userDto.toEntity().getRoles());
         return "Barer " + token;
     }
 
+    //sign in
     @Override
     public Map<String, String> signin(LoginDto loginDto) {
-        return null;
+        User findUser = userRepository.findByUserEmail(loginDto.getUserEmail());
+        if(findUser == null) throw new UserNotFoundException("해당 유저를 찾을 수 없습니다.");  // 유저가 존재하는지 확인
+
+        Map<String,String> testMap = new HashMap<>();
+        testMap.put("hello","world");
+        return testMap;
     }
 
     @Override
