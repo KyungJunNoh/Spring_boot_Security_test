@@ -32,20 +32,24 @@ public class UserServiceImpl implements UserService {
         }
         userDto.setUserPw(passwordEncoder.encode(userDto.getUserPw())); // 패스워드를 암호화하여 저장
         userRepository.save(userDto.toEntity());
-
         String token = jwtTokenProvider.createToken(userDto.getUserEmail(),userDto.toEntity().getRoles());
         return "Barer " + token;
     }
 
-    //sign in
+    //signin
     @Override
     public Map<String, String> signin(LoginDto loginDto) {
         User findUser = userRepository.findByUserEmail(loginDto.getUserEmail());
         if(findUser == null) throw new UserNotFoundException("해당 유저를 찾을 수 없습니다.");  // 유저가 존재하는지 확인
 
-        Map<String,String> testMap = new HashMap<>();
-        testMap.put("hello","world");
-        return testMap;
+        Map<String,String> map = new HashMap<>();
+        String accessToken = jwtTokenProvider.createToken(loginDto.getUserEmail(),loginDto.toEntity().getRoles());
+
+        map.put("userEmail",loginDto.getUserEmail());
+        map.put("accessToken","Bearer " + accessToken);
+
+
+        return map;
     }
 
     @Override
