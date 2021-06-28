@@ -1,10 +1,12 @@
 spring:
+  ### DB 설정 ###
   datasource:
     url: jdbc:h2:tcp://localhost/~/jwttest3
     username: sa
     password:
     driver-class-name: org.h2.Driver
 
+  ### JPA 설정 ###
   jpa:
     hibernate:
       ddl-auto: create
@@ -12,9 +14,17 @@ spring:
       hibernate:
         format_sql: true
 
+  ### Redis 설정 ###
+  redis:
+    image: redis:latest
+    host: localhost
+    port: 6379
+
+### Logging ###
 logging.level:
   org.hibernate.SQL: debug
 
+### Security ###
 security:
   jwt:
     token:
