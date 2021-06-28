@@ -1,9 +1,7 @@
-package com.server.token.Security;
+package com.server.token.security;
 
 //import com.server.token.Security.JwtTokenProvider;
-import com.server.token.exception.CustomException;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.apache.bcel.ExceptionConstants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
 
 
 @EnableWebSecurity(debug = true)
@@ -31,6 +28,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // jwt token으로 인증할것이므로 세션필요없으므로 생성안함.
                 .and()
                 .authorizeRequests()
+                .antMatchers("/api/signin", "/api/signup").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtTokenFilterConfigurer(jwtTokenProvider));
@@ -38,10 +36,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(WebSecurity web) throws Exception{
-        web
-                .ignoring()
-                .antMatchers("/**")
-                .anyRequest();
+        web.ignoring().antMatchers("/**/api-docs", "/swagger-resources/**",
+                "/swagger-ui.html", "/webjars/**", "/swagger/**", "/h2-console/**", "/configuration/ui");
     }
 
     @Bean

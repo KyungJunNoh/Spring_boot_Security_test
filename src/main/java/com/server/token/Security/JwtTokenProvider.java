@@ -1,7 +1,6 @@
-package com.server.token.Security;
+package com.server.token.security;
 
 import com.server.token.domain.entity.Role;
-import com.server.token.domain.entity.User;
 import com.server.token.exception.CustomException;
 import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
@@ -66,13 +63,14 @@ public class JwtTokenProvider {
     public String createRefreshToken(){
         Claims claims = Jwts.claims().setSubject(null);
 
-        Date now = new Date(); // 지금 시간
-        Date validity = new Date(now.getTime() + REFRESH_TOKEN_VALIDATION_SECOND); // 지금 시간 + expireTime 시
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + REFRESH_TOKEN_VALIDATION_SECOND); //Expire Time
 
         return Jwts.builder()
                 .setClaims(claims)
-                .setExpiration(validity)
-                .signWith(SignatureAlgorithm.ES256,secretKey)
+                .setIssuedAt(now)
+                .setExpiration(validity) // set Expire Time
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 

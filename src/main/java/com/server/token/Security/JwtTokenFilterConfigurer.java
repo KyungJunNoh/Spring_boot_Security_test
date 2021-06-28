@@ -1,4 +1,4 @@
-package com.server.token.Security;
+package com.server.token.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;

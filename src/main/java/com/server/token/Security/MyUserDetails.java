@@ -1,4 +1,4 @@
-package com.server.token.Security;
+package com.server.token.security;
 
 import com.server.token.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
