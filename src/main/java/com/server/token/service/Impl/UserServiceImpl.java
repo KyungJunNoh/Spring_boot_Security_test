@@ -1,6 +1,6 @@
 package com.server.token.service.Impl;
 
-import com.server.token.Security.JwtTokenProvider;
+import com.server.token.security.JwtTokenProvider;
 import com.server.token.domain.dto.LoginDto;
 import com.server.token.domain.dto.UserDto;
 import com.server.token.domain.entity.User;
@@ -8,6 +8,7 @@ import com.server.token.exception.UserAlreadyExistsException;
 import com.server.token.exception.UserNotFoundException;
 import com.server.token.repository.UserRepository;
 import com.server.token.service.UserService;
+import com.server.token.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +23,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisUtil redisUtil;
 
     //signup
     @Override
@@ -32,8 +33,7 @@ public class UserServiceImpl implements UserService {
         }
         userDto.setUserPw(passwordEncoder.encode(userDto.getUserPw())); // 패스워드를 암호화하여 저장
         userRepository.save(userDto.toEntity());
-        String token = jwtTokenProvider.createToken(userDto.getUserEmail(),userDto.toEntity().getRoles());
-        return "Barer " + token;
+        return "성공";
     }
 
     //signin
@@ -44,10 +44,13 @@ public class UserServiceImpl implements UserService {
 
         Map<String,String> map = new HashMap<>();
         String accessToken = jwtTokenProvider.createToken(loginDto.getUserEmail(),loginDto.toEntity().getRoles());
+        String refreshToken = jwtTokenProvider.createRefreshToken();
+
+        redisUtil.setDataExpire(findUser.getUserEmail(), refreshToken, JwtTokenProvider.REFRESH_TOKEN_VALIDATION_SECOND);
 
         map.put("userEmail",loginDto.getUserEmail());
         map.put("accessToken","Bearer " + accessToken);
-
+        map.put("refreshToken","Bearer " + refreshToken);
 
         return map;
     }
@@ -70,4 +73,13 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    public String 새로운_토큰_발급(String re){
+
+        //A, R => 헤더
+        //A 토큰 안에있는 사용자 검증
+        // Redis안에 있는 R랑 헤더로 들어온 R ==
+        // 새롭게 A발급
+        // 틀리면 에러 처리
+        return "";
+    }
 }
