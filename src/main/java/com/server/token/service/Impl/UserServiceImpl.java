@@ -42,13 +42,16 @@ public class UserServiceImpl implements UserService {
         User findUser = userRepository.findByUserEmail(loginDto.getUserEmail());
         if(findUser == null) throw new UserNotFoundException("해당 유저를 찾을 수 없습니다.");  // 유저가 존재하는지 확인
 
+        boolean passwordCheck = passwordEncoder.matches(loginDto.getUserPw(), findUser.getPassword()); // 인코딩 후 dto에 저장된 pw값과 db에 저장된 pw를 비교 후 같으면 true 다르면 false 반환
+        if(!passwordCheck) throw new UserNotFoundException(); // passwordCheck 후 true가 아니라면 Exception, false면 무시
+
         Map<String,String> map = new HashMap<>();
         String accessToken = jwtTokenProvider.createToken(loginDto.getUserEmail(),loginDto.toEntity().getRoles());
         String refreshToken = jwtTokenProvider.createRefreshToken();
 
-        redisUtil.setDataExpire(findUser.getUserEmail(), refreshToken, JwtTokenProvider.REFRESH_TOKEN_VALIDATION_SECOND);
+        redisUtil.setDataExpire(findUser.getUserEmail(), refreshToken, JwtTokenProvider.REFRESH_TOKEN_VALIDATION_SECOND); // redis에 값을 삽입하기위해 key,value,만료시간 설정
 
-        map.put("userEmail",loginDto.getUserEmail());
+        map.put("userEmail", loginDto.getUserEmail());
         map.put("accessToken","Bearer " + accessToken);
         map.put("refreshToken","Bearer " + refreshToken);
 
@@ -57,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User read(Long idx) {
-        return userRepository.findById(idx).orElseThrow(UserNotFoundException :: new); // 코드를 수정 후 뭐가 이렇게 많이 나오지?
+        return userRepository.findById(idx).orElseThrow(UserNotFoundException :: new);
     }
 
     @Transactional
