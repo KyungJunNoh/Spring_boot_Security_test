@@ -88,11 +88,21 @@ public class JwtTokenProvider {
         String bearerToken = req.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
+        }else{
+            return null;
         }
-        return null;
     }
 
+    public String resolveRefreshToken(HttpServletRequest req){
+        String refreshToken = req.getHeader("RefreshToken");
+        if(refreshToken != null){
+            return refreshToken.substring(7);
+        } else {
+            return null;
+        }
+    }
 
+    //token을 검증하는 메소드 (유효한지 안한지, 만료일 검증)
     public boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
