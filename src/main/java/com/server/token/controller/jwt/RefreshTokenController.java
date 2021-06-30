@@ -16,7 +16,7 @@ public class RefreshTokenController {
     private final RefreshTokenService refreshTokenService;
 
     @GetMapping("/refreshtoken")
-    public Map<String,String> refresh(HttpServletRequest request){ // HttpServletRequest 입력값없이 그냥 요청만 들어왔을때,
+    public Map<String,String> refresh(HttpServletRequest request){ // accesstoken과 refreshToken 을 입력받음
         return refreshTokenService.refresh(request);
     }
 }
