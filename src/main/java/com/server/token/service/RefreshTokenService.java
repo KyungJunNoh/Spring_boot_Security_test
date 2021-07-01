@@ -1,4 +1,4 @@
-package com.server.token.service.jwt;
+package com.server.token.service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
