@@ -2,9 +2,8 @@ package com.server.token.service.Impl;
 
 import com.server.token.domain.dto.UserDto;
 import com.server.token.domain.entity.Role;
-import com.server.token.domain.entity.User;
 import com.server.token.security.JwtTokenProvider;
-import com.server.token.service.jwt.RefreshTokenService;
+import com.server.token.service.RefreshTokenService;
 import com.server.token.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisUtil redisUtil;
 
+    //토큰 재발급
     @Override
     public Map<String,String> refresh(HttpServletRequest request) {
         UserDto userDto = new UserDto();
@@ -42,9 +42,9 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
         // 아래 코드 실행
         if(redisUtil.getData(nickname).equals(refreshToken) && jwtTokenProvider.validateToken(refreshToken)){
             redisUtil.deleteData(nickname); // redis에 있는 refreshToken를 초기화
-            newAccessToken = jwtTokenProvider.createToken(nickname, roles);
-            newRefreshToken = jwtTokenProvider.createRefreshToken();
-            redisUtil.setDataExpire(nickname,newRefreshToken,jwtTokenProvider.REFRESH_TOKEN_VALIDATION_SECOND);
+            newAccessToken = jwtTokenProvider.createToken(nickname, roles); // accessToken 생성
+            newRefreshToken = jwtTokenProvider.createRefreshToken(); // refreshToken 생성
+            redisUtil.setDataExpire(nickname,newRefreshToken,jwtTokenProvider.REFRESH_TOKEN_VALIDATION_SECOND); // redis에
             map.put("nickname",nickname);
             map.put("newAccessToken",newAccessToken); // newAccessToken 반환
             map.put("newRefreshToken",newRefreshToken); // newRefreshToken 반환
