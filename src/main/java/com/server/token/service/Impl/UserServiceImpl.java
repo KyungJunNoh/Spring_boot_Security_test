@@ -37,7 +37,6 @@ public class UserServiceImpl implements UserService {
         }
         userDto.setUserPw(passwordEncoder.encode(userDto.getUserPw())); // 패스워드를 암호화하여 저장
         User userInfo = userRepository.save(userDto.toEntity());
-        emailService.sandEmail();
         return userInfo;
     }
 
@@ -63,11 +62,6 @@ public class UserServiceImpl implements UserService {
         map.put("refreshToken","Bearer " + refreshToken);
 
         return map;
-    }
-
-    @Override
-    public void testEmail() {
-        emailService.sandEmail();
     }
 
 
