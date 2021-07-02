@@ -9,4 +9,6 @@ import java.util.Map;
 public interface UserService {
     User signup(UserDto userDto);
     Map<String, String> signin(LoginDto loginDto);
+//    String findPassword();
+    void testEmail();
 }

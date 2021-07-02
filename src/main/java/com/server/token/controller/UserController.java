@@ -6,6 +6,7 @@ import com.server.token.domain.entity.User;
 import com.server.token.service.UserService;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -28,5 +29,16 @@ public class UserController {
         return userService.signin(loginDto);
     }
 
+    // 비밀번호 찾기 (변경)
+    @PostMapping("/findPassword")
+    public String findPassword(LoginDto loginDto){
+        return "success";
+    }
+
+    @GetMapping("/testEmail")
+    public String testEmail(){
+        userService.testEmail();
+        return "success";
+    }
 }
 

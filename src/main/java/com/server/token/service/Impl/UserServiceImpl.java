@@ -7,12 +7,16 @@ import com.server.token.domain.entity.User;
 import com.server.token.exception.UserAlreadyExistsException;
 import com.server.token.exception.UserNotFoundException;
 import com.server.token.repository.UserRepository;
+import com.server.token.service.EmailService;
 import com.server.token.service.UserService;
 import com.server.token.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +27,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisUtil redisUtil;
+    private final EmailService emailService;
 
     // 회원가입
     @Override
@@ -32,6 +37,7 @@ public class UserServiceImpl implements UserService {
         }
         userDto.setUserPw(passwordEncoder.encode(userDto.getUserPw())); // 패스워드를 암호화하여 저장
         User userInfo = userRepository.save(userDto.toEntity());
+        emailService.sandEmail();
         return userInfo;
     }
 
@@ -58,4 +64,11 @@ public class UserServiceImpl implements UserService {
 
         return map;
     }
+
+    @Override
+    public void testEmail() {
+        emailService.sandEmail();
+    }
+
+
 }
