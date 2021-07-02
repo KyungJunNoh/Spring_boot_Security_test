@@ -34,11 +34,6 @@ public class UserController {
     public String findPassword(LoginDto loginDto){
         return "success";
     }
-
-    @GetMapping("/testEmail")
-    public String testEmail(){
-        userService.testEmail();
-        return "success";
-    }
+    
 }
 
