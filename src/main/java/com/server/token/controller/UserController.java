@@ -1,5 +1,6 @@
 package com.server.token.controller;
 
+import com.server.token.domain.dto.FindPasswordDto;
 import com.server.token.domain.dto.LoginDto;
 import com.server.token.domain.dto.UserDto;
 import com.server.token.domain.entity.User;
@@ -29,11 +30,17 @@ public class UserController {
         return userService.signin(loginDto);
     }
 
+    // 이메일 인증
+    @PostMapping("/email")
+    public String emailAuthentication(@RequestBody String userEmail){
+        return userService.emailAuthentication(userEmail);
+    }
+
     // 비밀번호 찾기 (변경)
     @PostMapping("/findPassword")
-    public String findPassword(LoginDto loginDto){
-        return "success";
+    public String changePassword(@RequestBody FindPasswordDto findPasswordDto){
+        return userService.findPassword(findPasswordDto);
     }
-    
+
 }
 
