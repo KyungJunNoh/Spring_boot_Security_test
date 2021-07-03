@@ -32,7 +32,6 @@ public class User implements UserDetails {
         this.userPw = userPw;
     }
 
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<String> rolesConvertString = this.roles.stream().map(Enum::name).collect(Collectors.toList());
