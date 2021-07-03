@@ -1,5 +1,7 @@
 package com.server.token.service.Impl;
 
+import com.server.token.domain.dto.FindPasswordDto;
+import com.server.token.domain.dto.UserEmailDto;
 import com.server.token.security.JwtTokenProvider;
 import com.server.token.domain.dto.LoginDto;
 import com.server.token.domain.dto.UserDto;
@@ -9,6 +11,7 @@ import com.server.token.exception.UserNotFoundException;
 import com.server.token.repository.UserRepository;
 import com.server.token.service.EmailService;
 import com.server.token.service.UserService;
+import com.server.token.util.KeyUtil;
 import com.server.token.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -16,9 +19,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +33,7 @@ public class UserServiceImpl implements UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisUtil redisUtil;
     private final EmailService emailService;
-
+    private final KeyUtil keyUtil;
     // 회원가입
     @Override
     public User signup(UserDto userDto) {
@@ -43,7 +48,7 @@ public class UserServiceImpl implements UserService {
     // 로그인
     @Override
     public Map<String, String> signin(LoginDto loginDto) {
-        User findUser = userRepository.findByUserEmail(loginDto.getUserEmail()); // loginDto 에서 유저의 이메일을 가져와서 findUser변수에 저장
+        User findUser = userRepository.findByUserEmail(loginDto.getUserEmail()); // loginDto 에서 유저의 이메일을 가져와서 db에서 값을 찾은 후 findUser 변수에 저장
         if(findUser == null) throw new UserNotFoundException("해당 유저를 찾을 수 없습니다.");  // findUser의 값이 null이라면 UserNotFoundException메소드 실행
 
         boolean passwordCheck = passwordEncoder.matches(loginDto.getUserPw(), findUser.getUserPw()); // 인코딩 후 dto에 저장된 pw값과 db에 저장된 pw를 비교 후 같으면 true 다르면 false 반환
@@ -64,5 +69,24 @@ public class UserServiceImpl implements UserService {
         return map;
     }
 
+    // 비밀번호를 찾기 전 이메일 인증
+    @Override
+    public String emailAuthentication(UserEmailDto userEmailDto) {
+        String userEmail = userEmailDto.getUserEmail();
+        String key = keyUtil.keyIssuance();
+        emailService.sendEmail(userEmail,"Spring boot 인증번호 요청",key);
+        return "인증 키 : " + key;
+    }
+
+    // 이메일 인증 후 비밀번호 변경
+    @Transactional
+    @Override
+    public String findPassword(FindPasswordDto findPasswordDto) {
+        User findUser = userRepository.findByUserEmail(findPasswordDto.getUserEmail());
+        if(findUser == null) throw new UserNotFoundException("해당 유저를 찾을 수 없습니다.");
+        String encodePw = passwordEncoder.encode(findPasswordDto.getNewPassword());
+        findUser.update(findPasswordDto.getUserEmail(),encodePw);
+        return "Update Success";
+    }
 
 }
