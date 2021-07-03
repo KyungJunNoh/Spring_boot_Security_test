@@ -3,6 +3,7 @@ package com.server.token.controller;
 import com.server.token.domain.dto.FindPasswordDto;
 import com.server.token.domain.dto.LoginDto;
 import com.server.token.domain.dto.UserDto;
+import com.server.token.domain.dto.UserEmailDto;
 import com.server.token.domain.entity.User;
 import com.server.token.service.UserService;
 import io.swagger.annotations.ApiParam;
@@ -32,8 +33,8 @@ public class UserController {
 
     // 이메일 인증
     @PostMapping("/email")
-    public String emailAuthentication(@RequestBody String userEmail){
-        return userService.emailAuthentication(userEmail);
+    public String emailAuthentication(@RequestBody UserEmailDto userEmailDto){
+        return userService.emailAuthentication(userEmailDto);
     }
 
     // 비밀번호 찾기 (변경)
