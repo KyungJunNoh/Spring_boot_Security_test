@@ -12,4 +12,5 @@ public interface UserService {
     String emailAuthentication(UserEmailDto userEmailDto);
     String findPassword(FindPasswordDto findPasswordDto);
     String changePassword(HttpServletRequest httpServletRequest, ChangePasswordRequestDto changePasswordRequestDto);
+    String logout(HttpServletRequest httpServletRequest);
 }
