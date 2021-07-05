@@ -12,17 +12,13 @@ import com.server.token.service.UserService;
 import com.server.token.util.KeyUtil;
 import com.server.token.util.RedisUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
-import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -33,6 +29,7 @@ public class UserServiceImpl implements UserService {
     private final RedisUtil redisUtil;
     private final EmailService emailService;
     private final KeyUtil keyUtil;
+
     // 회원가입
     @Override
     public User signup(UserDto userDto) {
@@ -47,6 +44,7 @@ public class UserServiceImpl implements UserService {
     // 로그인
     @Override
     public Map<String, String> signin(LoginDto loginDto) {
+
         User findUser = userRepository.findByUserEmail(loginDto.getUserEmail()); // loginDto 에서 유저의 이메일을 가져와서 db에서 값을 찾은 후 findUser 변수에 저장
         if(findUser == null) throw new UserNotFoundException("해당 유저를 찾을 수 없습니다.");  // findUser의 값이 null이라면 UserNotFoundException메소드 실행
 
@@ -103,6 +101,14 @@ public class UserServiceImpl implements UserService {
         String encodePw = passwordEncoder.encode(changePasswordRequestDto.getNewPassword());
         findUser.update(name,encodePw);
         return "changePassword Success";
+    }
+
+    @Override
+    public String logout(HttpServletRequest httpServletRequest) {
+        String token = jwtTokenProvider.resolveToken(httpServletRequest);
+        String username = jwtTokenProvider.getUsername(token);
+        redisUtil.deleteData(username);
+        return "Success";
     }
 
 }
