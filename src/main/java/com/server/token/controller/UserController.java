@@ -46,5 +46,12 @@ public class UserController {
     public String changePassword(HttpServletRequest httpServletRequest, @RequestBody ChangePasswordRequestDto changePasswordRequestDto){
         return userService.changePassword(httpServletRequest,changePasswordRequestDto);
     }
+
+    // 로그아웃
+    @GetMapping("/logout")
+    public String logout(HttpServletRequest httpServletRequest){
+        return userService.logout(httpServletRequest);
+    }
+    
 }
 
