@@ -1,10 +1,8 @@
 package com.server.token.service.Impl;
 
-import com.server.token.domain.dto.FindPasswordDto;
-import com.server.token.domain.dto.UserEmailDto;
+import com.server.token.domain.dto.*;
+import com.server.token.exception.NotMatchPasswordException;
 import com.server.token.security.JwtTokenProvider;
-import com.server.token.domain.dto.LoginDto;
-import com.server.token.domain.dto.UserDto;
 import com.server.token.domain.entity.User;
 import com.server.token.exception.UserAlreadyExistsException;
 import com.server.token.exception.UserNotFoundException;
@@ -19,6 +17,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -52,7 +51,7 @@ public class UserServiceImpl implements UserService {
         if(findUser == null) throw new UserNotFoundException("해당 유저를 찾을 수 없습니다.");  // findUser의 값이 null이라면 UserNotFoundException메소드 실행
 
         boolean passwordCheck = passwordEncoder.matches(loginDto.getUserPw(), findUser.getUserPw()); // 인코딩 후 dto에 저장된 pw값과 db에 저장된 pw를 비교 후 같으면 true 다르면 false 반환
-        if(!passwordCheck) throw new UserNotFoundException("비밀번호가 올바르지 않습니다."); // passwordCheck 후 true가 아니라면 Exception, false면 무시
+        if(!passwordCheck) throw new NotMatchPasswordException("비밀번호가 올바르지 않습니다."); // passwordCheck 후 true가 아니라면 Exception, false면 무시
 
         Map<String,String> map = new HashMap<>(); // 값을 반환할 KEY : VALUE 를 담을 수있는 Map 생성
         String accessToken = jwtTokenProvider.createToken(loginDto.getUserEmail(),loginDto.toEntity().getRoles()); // accessToken 생성
@@ -86,7 +85,24 @@ public class UserServiceImpl implements UserService {
         if(findUser == null) throw new UserNotFoundException("해당 유저를 찾을 수 없습니다.");
         String encodePw = passwordEncoder.encode(findPasswordDto.getNewPassword());
         findUser.update(findPasswordDto.getUserEmail(),encodePw);
-        return "Update Success";
+        return "findPassword Success";
+    }
+
+    // 로그인 중 비밀번호 변경
+    @Transactional
+    @Override
+    public String changePassword(HttpServletRequest httpServletRequest, ChangePasswordRequestDto changePasswordRequestDto) {
+        String accessToken = jwtTokenProvider.resolveToken(httpServletRequest);
+        String name = jwtTokenProvider.getAuthentication(accessToken).getName();
+        User findUser = userRepository.findByUserEmail(name);
+        String oldPassword = changePasswordRequestDto.getOldPassword();
+
+        boolean passwordCheck = passwordEncoder.matches(oldPassword,findUser.getUserPw());
+        if(!passwordCheck) throw new NotMatchPasswordException("Password가 옳지 않습니다.");
+
+        String encodePw = passwordEncoder.encode(changePasswordRequestDto.getNewPassword());
+        findUser.update(name,encodePw);
+        return "changePassword Success";
     }
 
 }
