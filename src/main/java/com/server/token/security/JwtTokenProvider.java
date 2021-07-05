@@ -74,6 +74,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
+    // 유저 정보를 뽑아올 수 있는 메소드
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = userDetailsService.loadUserByUsername(getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
