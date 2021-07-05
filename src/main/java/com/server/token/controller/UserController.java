@@ -1,9 +1,6 @@
 package com.server.token.controller;
 
-import com.server.token.domain.dto.FindPasswordDto;
-import com.server.token.domain.dto.LoginDto;
-import com.server.token.domain.dto.UserDto;
-import com.server.token.domain.dto.UserEmailDto;
+import com.server.token.domain.dto.*;
 import com.server.token.domain.entity.User;
 import com.server.token.service.UserService;
 import io.swagger.annotations.ApiParam;
@@ -11,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 @RequestMapping("/api")
@@ -38,10 +36,15 @@ public class UserController {
     }
 
     // 비밀번호 찾기 (변경)
-    @PostMapping("/findPassword")
-    public String changePassword(@RequestBody FindPasswordDto findPasswordDto){
+    @PutMapping("/findPassword")
+    public String findPassword(@RequestBody FindPasswordDto findPasswordDto){
         return userService.findPassword(findPasswordDto);
     }
 
+    // 로그인 중의 비밀번호 변경
+    @PutMapping("/changepassword")
+    public String changePassword(HttpServletRequest httpServletRequest, @RequestBody ChangePasswordRequestDto changePasswordRequestDto){
+        return userService.changePassword(httpServletRequest,changePasswordRequestDto);
+    }
 }
 
