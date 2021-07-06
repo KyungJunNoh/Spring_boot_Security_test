@@ -13,4 +13,5 @@ public interface UserService {
     String findPassword(FindPasswordDto findPasswordDto);
     String changePassword(HttpServletRequest httpServletRequest, ChangePasswordRequestDto changePasswordRequestDto);
     String logout(HttpServletRequest httpServletRequest);
+    String tokenCheck(String token);
 }
