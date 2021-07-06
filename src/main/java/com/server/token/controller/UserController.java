@@ -3,6 +3,8 @@ package com.server.token.controller;
 import com.server.token.domain.dto.*;
 import com.server.token.domain.entity.User;
 import com.server.token.service.UserService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -52,6 +54,12 @@ public class UserController {
     public String logout(HttpServletRequest httpServletRequest){
         return userService.logout(httpServletRequest);
     }
-    
+
+    // token 유효성 체크
+    @GetMapping("/tokencheck")
+    public String tokenCheck(@RequestHeader String Bearer){
+        return userService.tokenCheck(Bearer);
+    }
+
 }
 
