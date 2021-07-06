@@ -3,12 +3,14 @@ package com.server.token.security;
 import com.server.token.domain.entity.Role;
 import com.server.token.exception.CustomException;
 import io.jsonwebtoken.*;
+import jdk.jshell.spi.ExecutionControlProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
@@ -27,11 +29,11 @@ public class JwtTokenProvider {
     @Value("${security.jwt.token.secretKey}")
     private String secretKey;
 
-    public final static long TOKEN_VALIDATION_SECOND = 1000L * 3600 * 24;  //하루를 accessToken 만료 기간으로 잡는다
-    public final static long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 3600 * 24 * 210; //7개월을 refreshToken 만료 기간으로 잡는다.
+//    public final static long TOKEN_VALIDATION_SECOND = 1000L * 3600 * 24;  //하루를 accessToken 만료 기간으로 잡는다
+//    public final static long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 3600 * 24 * 210; //7개월을 refreshToken 만료 기간으로 잡는다.
 
-//    public final static long TOKEN_VALIDATION_SECOND = 1000L * 60;  // 1분을 accessToken 만료 기간으로 잡는다
-//    public final static long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 120; // 1시간을 refreshToken 만료 기간으로 잡는다.
+    public final static long TOKEN_VALIDATION_SECOND = 1000L * 60;  // 1분을 accessToken 만료 기간으로 잡는다
+    public final static long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 120; // 1시간을 refreshToken 만료 기간으로 잡는다.
 
     private final UserDetailsService userDetailsService; // 실제 데이터베이스에서 사용자 인증정보를 가져오는 userDetailsService 선언
 
@@ -106,10 +108,11 @@ public class JwtTokenProvider {
     //token을 검증하는 메소드 (유효한지 안한지, 만료일 검증)
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new CustomException("Expired or invalid JWT token", HttpStatus.UNAUTHORIZED);
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return !claims.getBody().getExpiration().before(new Date()); //
+        } catch (Exception e) {
+            SecurityContextHolder.clearContext();
+            return false;
         }
     }
 
