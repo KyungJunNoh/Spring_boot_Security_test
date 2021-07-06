@@ -111,4 +111,14 @@ public class UserServiceImpl implements UserService {
         return "Success";
     }
 
+    @Override
+    public String tokenCheck(String token) {
+        boolean validate = jwtTokenProvider.validateToken(token);
+        if(validate){
+            return "유효";
+        }else{
+            return "만료";
+        }
+    }
+
 }
