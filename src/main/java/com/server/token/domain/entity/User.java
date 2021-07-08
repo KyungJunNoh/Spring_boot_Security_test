@@ -13,21 +13,36 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 @Builder
 public class User implements UserDetails {
     @Id @GeneratedValue
+    @Column(name = "USER_ID")
     private Long userIdx;
+
+    @Column(name = "USER_EMAIL")
     private String userEmail;
+
+    @Column(name = "USER_PW")
     private String userPw;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
+    @Column(name = "ROLE")
     private List<Role> roles = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<Board> board = new ArrayList<>();
+
     public void update(String userEmail,String userPw){
+        this.userEmail = userEmail;
+        this.userPw = userPw;
+    }
+
+    @Builder
+    public User(String userEmail, String userPw) {
         this.userEmail = userEmail;
         this.userPw = userPw;
     }
