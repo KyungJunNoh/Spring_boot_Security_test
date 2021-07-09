@@ -6,15 +6,18 @@ import com.server.token.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/board")
 public class BoardController {
     private final BoardService boardService;
 
     @PostMapping("/create")
-    public Long create(@RequestBody BoardCreateRequestDto boardCreateRequestDto){
-        return boardService.create(boardCreateRequestDto);
+    public String create(@RequestBody BoardCreateRequestDto boardCreateRequestDto, HttpServletRequest httpServletRequest){
+        boardService.create(boardCreateRequestDto,httpServletRequest);
+        return "Success";
     }
 
     @PutMapping("/update/{id}")
