@@ -13,7 +13,7 @@ import java.lang.reflect.Member;
 @Table
 @Entity
 public class Board {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) // GenerationType.IDENTITY 옵션은 자동으로 값을 설정(정렬)해주는 옵션이다. -> AUTO_INCREMENTS
     @Column(name = "BOARD_ID")
     private Long idx;
 
@@ -23,7 +23,7 @@ public class Board {
     @Column(name = "BOARD_CONTENT")
     private String content;
 
-    @ManyToOne(cascade = CascadeType.MERGE, targetEntity = User.class)
+    @ManyToOne
     @JoinColumn(name = "user_id", updatable = false)
     private User user;
 
