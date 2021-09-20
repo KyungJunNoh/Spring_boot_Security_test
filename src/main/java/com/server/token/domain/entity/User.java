@@ -29,20 +29,11 @@ public class User implements UserDetails {
     private String userPw;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
     @Column(name = "ROLE")
+    @Builder.Default
     private List<Role> roles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
-    private List<Board> board = new ArrayList<>();
-
     public void update(String userEmail,String userPw){
-        this.userEmail = userEmail;
-        this.userPw = userPw;
-    }
-
-    @Builder
-    public User(String userEmail, String userPw) {
         this.userEmail = userEmail;
         this.userPw = userPw;
     }

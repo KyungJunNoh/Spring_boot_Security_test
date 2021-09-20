@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.lang.reflect.Member;
 
+import static javax.persistence.FetchType.LAZY;
+
 @Getter
 @NoArgsConstructor
 @Table
@@ -23,7 +25,7 @@ public class Board {
     @Column(name = "BOARD_CONTENT")
     private String content;
 
-    @ManyToOne
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "user_id", updatable = false)
     private User user;
 
@@ -37,5 +39,9 @@ public class Board {
     public void update(String title, String content) {
         this.title = title;
         this.content = content;
+    }
+
+    public void userUpdate(User user){
+        this.user = user;
     }
 }
